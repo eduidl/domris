@@ -1,0 +1,10 @@
+[package]
+name = "tetris"
+version = "0.1.0"
+authors = ["Yuma Hiramatsu <ayzgnm5k8y@gmail.com>"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "*"

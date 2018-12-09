@@ -1,0 +1,26 @@
+{
+  "name": "tetris",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:debug": "cargo +nightly build --target wasm32-unknown-unknown && wasm-bindgen target/wasm32-unknown-unknown/debug/tetris.wasm --out-dir ./wasm && webpack",
+    "build:release": "cargo +nightly build --release --target wasm32-unknown-unknown && wasm-bindgen target/wasm32-unknown-unknown/release/tetris.wasm --out-dir ./wasm && webpack",
+    "server": "webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eduidl/tetris.git"
+  },
+  "author": "Yuma Hiramatsu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eduidl/tetris/issues"
+  },
+  "homepage": "https://github.com/eduidl/tetris#readme",
+  "devDependencies": {
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
+  }
+}
