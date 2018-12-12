@@ -8,3 +8,13 @@ crate-type = ["cdylib"]
 
 [dependencies]
 wasm-bindgen = "*"
+
+[dependencies.web-sys]
+version = "*"
+features = [
+  "Document",
+  "Element",
+  "Window",
+  "HtmlCanvasElement",
+  "CanvasRenderingContext2d",
+]
