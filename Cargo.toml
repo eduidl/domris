@@ -7,14 +7,17 @@ authors = ["Yuma Hiramatsu <ayzgnm5k8y@gmail.com>"]
 crate-type = ["cdylib"]
 
 [dependencies]
+rand = "*"
+time = "*"
 wasm-bindgen = "*"
 
 [dependencies.web-sys]
 version = "*"
 features = [
+  "CanvasRenderingContext2d",
   "Document",
   "Element",
-  "Window",
+  "EventTarget",
   "HtmlCanvasElement",
-  "CanvasRenderingContext2d",
+  "Window",
 ]
