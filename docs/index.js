@@ -55,14 +55,14 @@
 /******/ 		"./wasm/tetris_bg.wasm": function() {
 /******/ 			return {
 /******/ 				"./tetris": {
+/******/ 					"__wbg_log_d74d17cde7c63de5": function(p0i32,p1i32) {
+/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_log_d74d17cde7c63de5"](p0i32,p1i32);
+/******/ 					},
 /******/ 					"__wbindgen_string_new": function(p0i32,p1i32) {
 /******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_string_new"](p0i32,p1i32);
 /******/ 					},
 /******/ 					"__wbindgen_object_drop_ref": function(p0i32) {
 /******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_object_drop_ref"](p0i32);
-/******/ 					},
-/******/ 					"__widl_instanceof_CanvasRenderingContext2D": function(p0i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__widl_instanceof_CanvasRenderingContext2D"](p0i32);
 /******/ 					},
 /******/ 					"__widl_f_begin_path_CanvasRenderingContext2D": function(p0i32) {
 /******/ 						return installedModules["./wasm/tetris.js"].exports["__widl_f_begin_path_CanvasRenderingContext2D"](p0i32);
@@ -85,47 +85,35 @@
 /******/ 					"__widl_f_fill_rect_CanvasRenderingContext2D": function(p0i32,p1f64,p2f64,p3f64,p4f64) {
 /******/ 						return installedModules["./wasm/tetris.js"].exports["__widl_f_fill_rect_CanvasRenderingContext2D"](p0i32,p1f64,p2f64,p3f64,p4f64);
 /******/ 					},
-/******/ 					"__widl_f_get_element_by_id_Document": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__widl_f_get_element_by_id_Document"](p0i32,p1i32,p2i32);
-/******/ 					},
-/******/ 					"__widl_instanceof_HTMLCanvasElement": function(p0i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__widl_instanceof_HTMLCanvasElement"](p0i32);
-/******/ 					},
-/******/ 					"__widl_f_get_context_HTMLCanvasElement": function(p0i32,p1i32,p2i32,p3i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__widl_f_get_context_HTMLCanvasElement"](p0i32,p1i32,p2i32,p3i32);
-/******/ 					},
-/******/ 					"__widl_instanceof_Window": function(p0i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__widl_instanceof_Window"](p0i32);
-/******/ 					},
-/******/ 					"__widl_f_document_Window": function(p0i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__widl_f_document_Window"](p0i32);
-/******/ 					},
-/******/ 					"__wbg_newnoargs_6a80f84471205fc8": function(p0i32,p1i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_newnoargs_6a80f84471205fc8"](p0i32,p1i32);
-/******/ 					},
-/******/ 					"__wbg_call_582b20dfcad7fee4": function(p0i32,p1i32,p2i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_call_582b20dfcad7fee4"](p0i32,p1i32,p2i32);
-/******/ 					},
-/******/ 					"__wbindgen_number_get": function(p0i32,p1i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_number_get"](p0i32,p1i32);
-/******/ 					},
-/******/ 					"__wbindgen_string_get": function(p0i32,p1i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_string_get"](p0i32,p1i32);
-/******/ 					},
-/******/ 					"__wbindgen_boolean_get": function(p0i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_boolean_get"](p0i32);
-/******/ 					},
-/******/ 					"__wbindgen_is_null": function(p0i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_is_null"](p0i32);
-/******/ 					},
 /******/ 					"__wbindgen_is_undefined": function(p0i32) {
 /******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_is_undefined"](p0i32);
 /******/ 					},
-/******/ 					"__wbindgen_is_symbol": function(p0i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_is_symbol"](p0i32);
+/******/ 					"__wbindgen_jsval_eq": function(p0i32,p1i32) {
+/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_jsval_eq"](p0i32,p1i32);
 /******/ 					},
-/******/ 					"__wbindgen_object_clone_ref": function(p0i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_object_clone_ref"](p0i32);
+/******/ 					"__wbg_new_baf10398b0d0c64d": function(p0i32,p1i32) {
+/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_new_baf10398b0d0c64d"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_call_173f04c850a68d5f": function(p0i32,p1i32) {
+/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_call_173f04c850a68d5f"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_self_58232ab37cbe6608": function(p0i32) {
+/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_self_58232ab37cbe6608"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_crypto_329b714d7e7d321d": function(p0i32) {
+/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_crypto_329b714d7e7d321d"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_getRandomValues_2f960218fce3a102": function(p0i32) {
+/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_getRandomValues_2f960218fce3a102"](p0i32);
+/******/ 					},
+/******/ 					"__wbg_getRandomValues_5581e85fc6616df6": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_getRandomValues_5581e85fc6616df6"](p0i32,p1i32,p2i32);
+/******/ 					},
+/******/ 					"__wbg_require_4a70cbfd3adc73a8": function(p0i32,p1i32) {
+/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_require_4a70cbfd3adc73a8"](p0i32,p1i32);
+/******/ 					},
+/******/ 					"__wbg_randomFillSync_355c3fcfa754fa4e": function(p0i32,p1i32,p2i32) {
+/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_randomFillSync_355c3fcfa754fa4e"](p0i32,p1i32,p2i32);
 /******/ 					},
 /******/ 					"__wbindgen_throw": function(p0i32,p1i32) {
 /******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_throw"](p0i32,p1i32);
@@ -229,7 +217,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"./wasm/tetris_bg.wasm":"4aa4a1a14630a8069c06"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"./wasm/tetris_bg.wasm":"af050986334dc354dbe2"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {
@@ -330,7 +318,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const js = Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(1)]).then(__webpack_require__.bind(null, /*! ./wasm/tetris */ \"./wasm/tetris.js\"));\n\njs.then(js => {\n  js.start();\n});\n\n\n//# sourceURL=webpack:///./index.js?");
+eval("Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(1)]).then(__webpack_require__.bind(null, /*! ./wasm/tetris */ \"./wasm/tetris.js\"))\n  .then(wasm => {\n    const canvas = document.getElementById('canvas');\n    const ctx = canvas.getContext('2d');\n    let tetris = new wasm.Tetris;\n    wasm.draw(tetris, ctx);\n    \n    var last = now = Date.now();\n    function frame() {\n      now = Date.now();\n      tetris.update(now - last);\n      wasm.draw(tetris, ctx);\n      last = now;\n      requestAnimationFrame(frame, canvas);\n    }\n    frame();\n  })\n  .catch(console.error);\n\n\n\n//# sourceURL=webpack:///./index.js?");
 
 /***/ })
 

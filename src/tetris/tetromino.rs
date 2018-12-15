@@ -22,9 +22,10 @@ const SHAPES: [Shape; 7] = [
     Shape::Z,
 ];
 
-type Block = [[(i8, i8); 4]; 4];
+type Point = (i8, i8);
+type Block = Vec<Point>;
 
-const BLOCKS: [Block; 7] = [
+const BLOCKS: [[[Point; 4]; 4]; 7] = [
     [
         [(0, 1), (1, 1), (2, 1), (3, 1)],
         [(2, 0), (2, 1), (2, 2), (2, 3)],
@@ -65,33 +66,28 @@ const BLOCKS: [Block; 7] = [
 
 pub struct Tetromino {
     shape: Shape,
-    rotate: u8,
+    rotate: usize,
     ref_pos: (i8, i8),
 }
 
 impl Tetromino {
-    /*
-    pub fn new(shape: Shape) -> Tetromino {
-        Tetromino {
-            shape: shape,
-            rotate: 0,
-            ref_pos: (3, 0),
-        }
-    }
-    */
-
-    pub fn random() -> Tetromino {
+    pub(super) fn random() -> Tetromino {
         let mut rng = thread_rng();
         let range = Uniform::new(0, SHAPES.len());
+        
         return Tetromino {
             shape: SHAPES[range.sample(&mut rng)],
             rotate: 0,
-            ref_pos: (3, 0),
+            ref_pos: (4, 0),
         }
     }
 
-    fn pos(&self) -> Block {
-        match self.shape {
+    pub fn shape(&self) -> Shape {
+        self.shape
+    }
+
+    pub fn coordinates(&self) -> Block {
+        let blocks = match self.shape {
             Shape::I => BLOCKS[0],
             Shape::O => BLOCKS[1],
             Shape::T => BLOCKS[2],
@@ -99,30 +95,22 @@ impl Tetromino {
             Shape::L => BLOCKS[4],
             Shape::S => BLOCKS[5],
             Shape::Z => BLOCKS[6],
-        }
+        }[self.rotate];
+
+        blocks.into_iter()
+            .map(|(x, y)| (self.ref_pos.0 + x, self.ref_pos.1 + y))
+            .collect()
     }
 
-    fn left(&mut self) {
-        self.ref_pos.0 -= 1;
+    pub(super) fn move_x(&mut self, diff: i8) {
+        self.ref_pos.0 += diff;
     }
 
-    fn right(&mut self) {
-        self.ref_pos.0 += 1;
+    pub(super) fn move_y(&mut self, diff: i8) {
+        self.ref_pos.1 += diff;
     }
 
-    fn up(&mut self) {
-        self.ref_pos.1 -= 1;
-    }
-
-    fn down(&mut self) {
-        self.ref_pos.1 += 1;
-    }
-
-    fn clockwise(&mut self) {
-        self.rotate = (self.rotate + 1) % 4;
-    }
-
-    fn anticlockwise(&mut self) {
-        self.rotate = (self.rotate + 3) % 4;
+    pub(super) fn rotate(&mut self, diff: usize) {
+        self.rotate = (self.rotate + diff) % 4;
     }
 }
