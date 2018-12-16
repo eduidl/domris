@@ -1,7 +1,5 @@
 # Tetris (仮)
 
-まだWeb Assemblyのチュートリアルでしかない
-
 ## Requirements
 
 - Rust
