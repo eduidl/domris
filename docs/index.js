@@ -55,9 +55,6 @@
 /******/ 		"./wasm/tetris_bg.wasm": function() {
 /******/ 			return {
 /******/ 				"./tetris": {
-/******/ 					"__wbg_log_d74d17cde7c63de5": function(p0i32,p1i32) {
-/******/ 						return installedModules["./wasm/tetris.js"].exports["__wbg_log_d74d17cde7c63de5"](p0i32,p1i32);
-/******/ 					},
 /******/ 					"__wbindgen_string_new": function(p0i32,p1i32) {
 /******/ 						return installedModules["./wasm/tetris.js"].exports["__wbindgen_string_new"](p0i32,p1i32);
 /******/ 					},
@@ -217,7 +214,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"./wasm/tetris_bg.wasm":"af050986334dc354dbe2"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"./wasm/tetris_bg.wasm":"c208c8d44868c474734b"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {
@@ -318,7 +315,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(1)]).then(__webpack_require__.bind(null, /*! ./wasm/tetris */ \"./wasm/tetris.js\"))\n  .then(wasm => {\n    const canvas = document.getElementById('canvas');\n    const ctx = canvas.getContext('2d');\n    let tetris = new wasm.Tetris;\n    wasm.draw(tetris, ctx);\n    \n    var last = now = Date.now();\n    function frame() {\n      now = Date.now();\n      tetris.update(now - last);\n      wasm.draw(tetris, ctx);\n      last = now;\n      requestAnimationFrame(frame, canvas);\n    }\n    frame();\n  })\n  .catch(console.error);\n\n\n\n//# sourceURL=webpack:///./index.js?");
+eval("Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(1)]).then(__webpack_require__.bind(null, /*! ./wasm/tetris */ \"./wasm/tetris.js\"))\n  .then(wasm => {\n    const canvas = document.getElementById('canvas');\n    const ctx = canvas.getContext('2d');\n    let tetris = new wasm.Tetris;\n    wasm.draw(tetris, ctx);\n\n    document.addEventListener('keydown', (e) => {\n      switch(e.key) {\n        case 'ArrowRight':\n          e.preventDefault();\n          tetris.enqueue_control(wasm.Control.MoveRight);\n          break;\n        case 'ArrowLeft':\n          e.preventDefault();\n          tetris.enqueue_control(wasm.Control.MoveLeft);\n          break;\n        case 'ArrowDown':\n          e.preventDefault();\n          tetris.enqueue_control(wasm.Control.MoveDown);\n          break;\n        case 'ArrowUp':\n          e.preventDefault();\n          tetris.enqueue_control(wasm.Control.MoveBottom);\n          break;\n        case ' ':\n          e.preventDefault();\n          const control = e.shiftKey ? wasm.Control.RotateLeft\n                                     : wasm.Control.RotateRight;\n          tetris.enqueue_control(control);\n          break;\n      }\n    });\n    \n    var last = now = Date.now();\n    function frame() {\n      now = Date.now();\n      tetris.update(now - last);\n      wasm.draw(tetris, ctx);\n      last = now;\n      requestAnimationFrame(frame, canvas);\n    }\n    frame();\n  })\n  .catch(console.error);\n\n\n\n//# sourceURL=webpack:///./index.js?");
 
 /***/ })
 

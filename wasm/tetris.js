@@ -1,29 +1,9 @@
 /* tslint:disable */
 import * as wasm from './tetris_bg';
 
-const lTextDecoder = typeof TextDecoder === 'undefined' ? require('util').TextDecoder : TextDecoder;
-
-let cachedTextDecoder = new lTextDecoder('utf-8');
-
-let cachegetUint8Memory = null;
-function getUint8Memory() {
-    if (cachegetUint8Memory === null || cachegetUint8Memory.buffer !== wasm.memory.buffer) {
-        cachegetUint8Memory = new Uint8Array(wasm.memory.buffer);
-    }
-    return cachegetUint8Memory;
-}
-
-function getStringFromWasm(ptr, len) {
-    return cachedTextDecoder.decode(getUint8Memory().subarray(ptr, ptr + len));
-}
-
-export function __wbg_log_d74d17cde7c63de5(arg0, arg1) {
-    let varg0 = getStringFromWasm(arg0, arg1);
-    console.log(varg0);
-}
 /**
 */
-export const Control = Object.freeze({ MoveLeft:0,MoveRight:1,RotateLeft:2,RotateRight:3, });
+export const Control = Object.freeze({ MoveLeft:0,MoveRight:1,MoveDown:2,MoveBottom:3,RotateLeft:4,RotateRight:5, });
 
 const heap = new Array(32);
 
@@ -121,6 +101,22 @@ export function __widl_f_fill_rect_CanvasRenderingContext2D(arg0, arg1, arg2, ar
     __widl_f_fill_rect_CanvasRenderingContext2D_target.call(getObject(arg0), arg1, arg2, arg3, arg4);
 }
 
+const lTextDecoder = typeof TextDecoder === 'undefined' ? require('util').TextDecoder : TextDecoder;
+
+let cachedTextDecoder = new lTextDecoder('utf-8');
+
+let cachegetUint8Memory = null;
+function getUint8Memory() {
+    if (cachegetUint8Memory === null || cachegetUint8Memory.buffer !== wasm.memory.buffer) {
+        cachegetUint8Memory = new Uint8Array(wasm.memory.buffer);
+    }
+    return cachegetUint8Memory;
+}
+
+function getStringFromWasm(ptr, len) {
+    return cachedTextDecoder.decode(getUint8Memory().subarray(ptr, ptr + len));
+}
+
 let heap_next = heap.length;
 
 function addHeapObject(obj) {
@@ -198,6 +194,13 @@ export class Tetris {
     */
     update(arg0) {
         return wasm.tetris_update(this.ptr, arg0);
+    }
+    /**
+    * @param {number} arg0
+    * @returns {void}
+    */
+    enqueue_control(arg0) {
+        return wasm.tetris_enqueue_control(this.ptr, arg0);
     }
 }
 
