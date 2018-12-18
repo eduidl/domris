@@ -8,9 +8,9 @@
 if needed, please execute below commands
 
 ```sh
-rustup install nightly
-rustup target add wasm32-unknown-unknown --toolchain nightly
-cargo +nightly install wasm-bindgen-cli
+rustup install beta 
+rustup target add wasm32-unknown-unknown --toolchain beta
+cargo +beta install wasm-bindgen-cli
 ```
 
 ## Run

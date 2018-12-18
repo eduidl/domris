@@ -43,4 +43,3 @@ import("./wasm/tetris")
     frame();
   })
   .catch(console.error);
-

@@ -27,7 +27,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /*!*****************************!*\
   !*** ./wasm/tetris_bg.wasm ***!
   \*****************************/
-/*! exports provided: memory, __rustc_debug_gdb_scripts_section__, __wbg_tetris_free, tetris_new, tetris_update, tetris_enqueue_control, draw */
+/*! exports provided: memory, __wbg_tetris_free, tetris_new, tetris_update, tetris_enqueue_control, draw */
 /***/ (function(module, exports, __webpack_require__) {
 
 eval("\"use strict\";\n// Instantiate WebAssembly module\nvar wasmExports = __webpack_require__.w[module.i];\n__webpack_require__.r(exports);\n// export exports from WebAssembly module\nfor(var name in wasmExports) if(name != \"__webpack_init__\") exports[name] = wasmExports[name];\n// exec imports from WebAssembly module (for esm order)\n/* harmony import */ var m0 = __webpack_require__(/*! ./tetris */ \"./wasm/tetris.js\");\n\n\n// exec wasm module\nwasmExports[\"__webpack_init__\"]()\n\n//# sourceURL=webpack:///./wasm/tetris_bg.wasm?");
