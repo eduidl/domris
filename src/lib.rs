@@ -4,9 +4,9 @@ extern crate web_sys;
 
 use wasm_bindgen::prelude::*;
 
-mod tetris;
-use tetris::*;
-use tetris::tetromino::Shape;
+mod domris;
+use domris::*;
+use domris::tetromino::Shape;
 
 const SQUARE_PX: u16 = 30;
 const W_PX: u16 = W as u16 * SQUARE_PX;
@@ -33,7 +33,7 @@ fn cell_to_color(cell: Cell) -> String {
 }
 
 #[wasm_bindgen]
-pub fn draw(game: &Tetris, ctx: &web_sys::CanvasRenderingContext2d) {
+pub fn draw(game: &Domris, ctx: &web_sys::CanvasRenderingContext2d) {
     // 動いているテトロミノ以外
     for (y, row) in game.board().iter().enumerate() {
         for (x, cell) in row.iter().enumerate() {

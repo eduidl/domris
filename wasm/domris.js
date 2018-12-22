@@ -1,5 +1,5 @@
 /* tslint:disable */
-import * as wasm from './tetris_bg';
+import * as wasm from './domris_bg';
 
 /**
 */
@@ -19,7 +19,7 @@ function addBorrowedObject(obj) {
     return stack_pointer;
 }
 /**
-* @param {Tetris} arg0
+* @param {Domris} arg0
 * @param {any} arg1
 * @returns {void}
 */
@@ -168,39 +168,39 @@ export function __wbg_randomFillSync_355c3fcfa754fa4e(arg0, arg1, arg2) {
     getObject(arg0).randomFillSync(varg1);
 }
 
-function freeTetris(ptr) {
+function freeDomris(ptr) {
 
-    wasm.__wbg_tetris_free(ptr);
+    wasm.__wbg_domris_free(ptr);
 }
 /**
 */
-export class Tetris {
+export class Domris {
 
     free() {
         const ptr = this.ptr;
         this.ptr = 0;
-        freeTetris(ptr);
+        freeDomris(ptr);
     }
 
     /**
     * @returns {}
     */
     constructor() {
-        this.ptr = wasm.tetris_new();
+        this.ptr = wasm.domris_new();
     }
     /**
     * @param {number} arg0
     * @returns {void}
     */
     update(arg0) {
-        return wasm.tetris_update(this.ptr, arg0);
+        return wasm.domris_update(this.ptr, arg0);
     }
     /**
     * @param {number} arg0
     * @returns {void}
     */
     enqueue_control(arg0) {
-        return wasm.tetris_enqueue_control(this.ptr, arg0);
+        return wasm.domris_enqueue_control(this.ptr, arg0);
     }
 }
 
