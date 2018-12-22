@@ -21,11 +21,12 @@ function addBorrowedObject(obj) {
 /**
 * @param {Domris} arg0
 * @param {any} arg1
+* @param {boolean} arg2
 * @returns {void}
 */
-export function draw(arg0, arg1) {
+export function draw(arg0, arg1, arg2) {
     try {
-        return wasm.draw(arg0.ptr, addBorrowedObject(arg1));
+        return wasm.draw(arg0.ptr, addBorrowedObject(arg1), arg2);
 
     } finally {
         heap[stack_pointer++] = undefined;
@@ -36,22 +37,6 @@ export function draw(arg0, arg1) {
 
 function getObject(idx) { return heap[idx]; }
 
-const __widl_f_begin_path_CanvasRenderingContext2D_target = typeof CanvasRenderingContext2D === 'undefined' ? null : CanvasRenderingContext2D.prototype.beginPath || function() {
-    throw new Error(`wasm-bindgen: CanvasRenderingContext2D.beginPath does not exist`);
-};
-
-export function __widl_f_begin_path_CanvasRenderingContext2D(arg0) {
-    __widl_f_begin_path_CanvasRenderingContext2D_target.call(getObject(arg0));
-}
-
-const __widl_f_stroke_CanvasRenderingContext2D_target = typeof CanvasRenderingContext2D === 'undefined' ? null : CanvasRenderingContext2D.prototype.stroke || function() {
-    throw new Error(`wasm-bindgen: CanvasRenderingContext2D.stroke does not exist`);
-};
-
-export function __widl_f_stroke_CanvasRenderingContext2D(arg0) {
-    __widl_f_stroke_CanvasRenderingContext2D_target.call(getObject(arg0));
-}
-
 function GetOwnOrInheritedPropertyDescriptor(obj, id) {
     while (obj) {
         let desc = Object.getOwnPropertyDescriptor(obj, id);
@@ -61,36 +46,12 @@ function GetOwnOrInheritedPropertyDescriptor(obj, id) {
 return {}
 }
 
-const __widl_f_set_stroke_style_CanvasRenderingContext2D_target = GetOwnOrInheritedPropertyDescriptor(typeof CanvasRenderingContext2D === 'undefined' ? null : CanvasRenderingContext2D.prototype, 'strokeStyle').set || function() {
-    throw new Error(`wasm-bindgen: CanvasRenderingContext2D.strokeStyle does not exist`);
-};
-
-export function __widl_f_set_stroke_style_CanvasRenderingContext2D(arg0, arg1) {
-    __widl_f_set_stroke_style_CanvasRenderingContext2D_target.call(getObject(arg0), getObject(arg1));
-}
-
 const __widl_f_set_fill_style_CanvasRenderingContext2D_target = GetOwnOrInheritedPropertyDescriptor(typeof CanvasRenderingContext2D === 'undefined' ? null : CanvasRenderingContext2D.prototype, 'fillStyle').set || function() {
     throw new Error(`wasm-bindgen: CanvasRenderingContext2D.fillStyle does not exist`);
 };
 
 export function __widl_f_set_fill_style_CanvasRenderingContext2D(arg0, arg1) {
     __widl_f_set_fill_style_CanvasRenderingContext2D_target.call(getObject(arg0), getObject(arg1));
-}
-
-const __widl_f_line_to_CanvasRenderingContext2D_target = typeof CanvasRenderingContext2D === 'undefined' ? null : CanvasRenderingContext2D.prototype.lineTo || function() {
-    throw new Error(`wasm-bindgen: CanvasRenderingContext2D.lineTo does not exist`);
-};
-
-export function __widl_f_line_to_CanvasRenderingContext2D(arg0, arg1, arg2) {
-    __widl_f_line_to_CanvasRenderingContext2D_target.call(getObject(arg0), arg1, arg2);
-}
-
-const __widl_f_move_to_CanvasRenderingContext2D_target = typeof CanvasRenderingContext2D === 'undefined' ? null : CanvasRenderingContext2D.prototype.moveTo || function() {
-    throw new Error(`wasm-bindgen: CanvasRenderingContext2D.moveTo does not exist`);
-};
-
-export function __widl_f_move_to_CanvasRenderingContext2D(arg0, arg1, arg2) {
-    __widl_f_move_to_CanvasRenderingContext2D_target.call(getObject(arg0), arg1, arg2);
 }
 
 const __widl_f_fill_rect_CanvasRenderingContext2D_target = typeof CanvasRenderingContext2D === 'undefined' ? null : CanvasRenderingContext2D.prototype.fillRect || function() {
@@ -117,6 +78,18 @@ function getStringFromWasm(ptr, len) {
     return cachedTextDecoder.decode(getUint8Memory().subarray(ptr, ptr + len));
 }
 
+const __widl_f_fill_text_with_max_width_CanvasRenderingContext2D_target = typeof CanvasRenderingContext2D === 'undefined' ? null : CanvasRenderingContext2D.prototype.fillText || function() {
+    throw new Error(`wasm-bindgen: CanvasRenderingContext2D.fillText does not exist`);
+};
+
+let cachegetUint32Memory = null;
+function getUint32Memory() {
+    if (cachegetUint32Memory === null || cachegetUint32Memory.buffer !== wasm.memory.buffer) {
+        cachegetUint32Memory = new Uint32Array(wasm.memory.buffer);
+    }
+    return cachegetUint32Memory;
+}
+
 let heap_next = heap.length;
 
 function addHeapObject(obj) {
@@ -126,6 +99,27 @@ function addHeapObject(obj) {
 
     heap[idx] = obj;
     return idx;
+}
+
+export function __widl_f_fill_text_with_max_width_CanvasRenderingContext2D(arg0, arg1, arg2, arg3, arg4, arg5, exnptr) {
+    let varg1 = getStringFromWasm(arg1, arg2);
+    try {
+        __widl_f_fill_text_with_max_width_CanvasRenderingContext2D_target.call(getObject(arg0), varg1, arg3, arg4, arg5);
+    } catch (e) {
+        const view = getUint32Memory();
+        view[exnptr / 4] = 1;
+        view[exnptr / 4 + 1] = addHeapObject(e);
+
+    }
+}
+
+const __widl_f_set_font_CanvasRenderingContext2D_target = GetOwnOrInheritedPropertyDescriptor(typeof CanvasRenderingContext2D === 'undefined' ? null : CanvasRenderingContext2D.prototype, 'font').set || function() {
+    throw new Error(`wasm-bindgen: CanvasRenderingContext2D.font does not exist`);
+};
+
+export function __widl_f_set_font_CanvasRenderingContext2D(arg0, arg1, arg2) {
+    let varg1 = getStringFromWasm(arg1, arg2);
+    __widl_f_set_font_CanvasRenderingContext2D_target.call(getObject(arg0), varg1);
 }
 
 export function __wbg_new_baf10398b0d0c64d(arg0, arg1) {
@@ -190,10 +184,10 @@ export class Domris {
     }
     /**
     * @param {number} arg0
-    * @returns {void}
+    * @returns {boolean}
     */
     update(arg0) {
-        return wasm.domris_update(this.ptr, arg0);
+        return (wasm.domris_update(this.ptr, arg0)) !== 0;
     }
     /**
     * @param {number} arg0
@@ -216,8 +210,55 @@ export function __wbindgen_string_new(p, l) {
     return addHeapObject(getStringFromWasm(p, l));
 }
 
+export function __wbindgen_number_get(n, invalid) {
+    let obj = getObject(n);
+    if (typeof(obj) === 'number') return obj;
+    getUint8Memory()[invalid] = 1;
+    return 0;
+}
+
+export function __wbindgen_is_null(idx) {
+    return getObject(idx) === null ? 1 : 0;
+}
+
 export function __wbindgen_is_undefined(idx) {
     return getObject(idx) === undefined ? 1 : 0;
+}
+
+export function __wbindgen_boolean_get(i) {
+    let v = getObject(i);
+    if (typeof(v) === 'boolean') {
+        return v ? 1 : 0;
+    } else {
+        return 2;
+    }
+}
+
+export function __wbindgen_is_symbol(i) {
+    return typeof(getObject(i)) === 'symbol' ? 1 : 0;
+}
+
+const lTextEncoder = typeof TextEncoder === 'undefined' ? require('util').TextEncoder : TextEncoder;
+
+let cachedTextEncoder = new lTextEncoder('utf-8');
+
+let WASM_VECTOR_LEN = 0;
+
+function passStringToWasm(arg) {
+
+    const buf = cachedTextEncoder.encode(arg);
+    const ptr = wasm.__wbindgen_malloc(buf.length);
+    getUint8Memory().set(buf, ptr);
+    WASM_VECTOR_LEN = buf.length;
+    return ptr;
+}
+
+export function __wbindgen_string_get(i, len_ptr) {
+    let obj = getObject(i);
+    if (typeof(obj) !== 'string') return 0;
+    const ptr = passStringToWasm(obj);
+    getUint32Memory()[len_ptr / 4] = WASM_VECTOR_LEN;
+    return ptr;
 }
 
 export function __wbindgen_jsval_eq(a, b) {
