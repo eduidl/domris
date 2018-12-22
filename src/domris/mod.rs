@@ -13,6 +13,16 @@ const DIRECTIONS: [(i8, i8); 4] = [
     (-1, 0), (1, 0)
 ];
 
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
+
+macro_rules! console_log {
+    ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
+}
+
 #[derive(PartialEq, Copy, Clone)]
 pub enum Cell {
     Shape(Shape),
@@ -35,8 +45,12 @@ type Board = [[(Cell, Option<u8>); W]; H];
 
 #[wasm_bindgen]
 pub struct Domris {
+    started: bool,
+    gameover: bool,
     board: Board,
+    level: u8,
     current_mino: Tetromino,
+    point: u32,
     drop_interval: u32,
     interval_count: u32,
     control_queue: VecDeque<Control>,
@@ -45,8 +59,12 @@ pub struct Domris {
 impl Default for Domris {
     fn default() -> Self {
         Self {
-            board: Self::board_initialize(),
-            current_mino: Tetromino::random(),
+            started: false,
+            gameover: false,
+            board: [[(Cell::Empty, None); W]; H],
+            level: 1,
+            current_mino: Tetromino::random(2),
+            point: 0,
             drop_interval: 1000,
             interval_count: 0,
             control_queue: VecDeque::new(), 
@@ -61,7 +79,18 @@ impl Domris {
         Self { .. Default::default() }
     }
 
+    pub fn start(&mut self, level: u8) {
+        *self = Self {
+            started: true,
+            board: Self::board_initialize(level * 2),
+            level: level,
+            current_mino: Tetromino::random(level * 2),
+            .. Default::default()
+        };
+    }
+
     pub fn update(&mut self, interval: u32) -> bool {
+        if !self.playing() { return false; } 
         while let Some(control) = self.control_queue.pop_front() {
             self.try_control(control);
             if control == Control::MoveBottom {
@@ -79,6 +108,18 @@ impl Domris {
             }
         }
         false
+    }
+
+    pub fn playing(&self) -> bool {
+        self.started && !self.gameover
+    }
+
+    pub fn point(&self) -> u32 {
+        self.point
+    }
+
+    pub fn gameover(&self) -> bool {
+        self.gameover
     }
 
     pub fn enqueue_control(&mut self, control: Control) {
@@ -105,6 +146,7 @@ impl Domris {
             for cell in self.board[0].iter_mut().skip(1).take(W - 2) {
                 cell.0 = Cell::Empty;
             }
+            self.point += 1000;
         }
     }
 
@@ -153,7 +195,7 @@ impl Domris {
     
     fn overwrapping(&self) -> bool {
         self.current_mino.coordinates().iter().any(|(x, y)|
-            self.board[*y as usize][*x as usize].0 != Cell::Empty
+            *y >= 0 && self.board[*y as usize][*x as usize].0 != Cell::Empty
         )
     }
 
@@ -192,31 +234,36 @@ impl Domris {
         }
     }
 
-    // 1. 落ちたテトロミノを固定
-    // 2. 新しいテトロミノをセット
-    // 3. 揃ったラインを消す
-    // etc..
     fn next_tetromino(&mut self) {
         self.penalty();
-        let mut tmp_mino = Tetromino::random();
+        let mut tmp_mino = Tetromino::random(self.level * 2);
         std::mem::swap(&mut tmp_mino, &mut self.current_mino);
         let shape = tmp_mino.shape();
         for ((x, y), num) in tmp_mino.coordinates().iter().zip(tmp_mino.numbers()) {
+            if *y < 0 {
+                self.gameover = true;
+                return;
+            }
             self.board[*y as usize][*x as usize] = (Cell::Shape(shape), Some(*num));
+        }
+        if self.current_mino.coordinates().iter().any(|(x, y)|
+            self.board[*y as usize][*x as usize].0 != Cell::Empty) {
+            self.gameover = true;
+            return;
         }
         self.delete_line();
         self.control_queue.clear();
         self.interval_count = 0;
     }
 
-    fn board_initialize() -> Board {
+    fn board_initialize(number_max: u8) -> Board {
         let mut board: Board = [[(Cell::Empty, None); W]; H];
         for cell in board[H - 1].iter_mut() {
             *cell = (Cell::Wall, None);
         }
 
         let mut rng = thread_rng();
-        let range = rand::distributions::Uniform::new(1, 7); 
+        let range = rand::distributions::Uniform::new(1, number_max + 1); 
         for line in board.iter_mut().take(H - 1) {
             line[0]     = (Cell::Wall, Some(range.sample(&mut rng)));
             line[W - 1] = (Cell::Wall, Some(range.sample(&mut rng)));

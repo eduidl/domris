@@ -184,10 +184,35 @@ export class Domris {
     }
     /**
     * @param {number} arg0
+    * @returns {void}
+    */
+    start(arg0) {
+        return wasm.domris_start(this.ptr, arg0);
+    }
+    /**
+    * @param {number} arg0
     * @returns {boolean}
     */
     update(arg0) {
         return (wasm.domris_update(this.ptr, arg0)) !== 0;
+    }
+    /**
+    * @returns {boolean}
+    */
+    playing() {
+        return (wasm.domris_playing(this.ptr)) !== 0;
+    }
+    /**
+    * @returns {number}
+    */
+    point() {
+        return wasm.domris_point(this.ptr);
+    }
+    /**
+    * @returns {boolean}
+    */
+    gameover() {
+        return (wasm.domris_gameover(this.ptr)) !== 0;
     }
     /**
     * @param {number} arg0

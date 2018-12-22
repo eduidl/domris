@@ -7,7 +7,15 @@ free(): void;
 
  constructor();
 
+ start(arg0: number): void;
+
  update(arg0: number): boolean;
+
+ playing(): boolean;
+
+ point(): number;
+
+ gameover(): boolean;
 
  enqueue_control(arg0: number): void;
 
