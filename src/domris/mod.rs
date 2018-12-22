@@ -1,22 +1,17 @@
-use wasm_bindgen::prelude::*;
 use std::collections::VecDeque;
+use rand::prelude::*;
+use wasm_bindgen::prelude::*;
 
-use self::tetromino::*;
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
-
-macro_rules! console_log {
-    ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
-}
+use self::tetromino::{Shape, Tetromino};
+pub mod tetromino;
 
 pub const W: usize = 12;
 pub const H: usize = 22;
 
-pub mod tetromino;
+const DIRECTIONS: [(i8, i8); 4] = [
+    (0, -1), (0, 1),
+    (-1, 0), (1, 0)
+];
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum Cell {
@@ -36,7 +31,7 @@ pub enum Control {
     RotateRight,
 }
 
-type Board = [[Cell; W]; H];
+type Board = [[(Cell, Option<u8>); W]; H];
 
 #[wasm_bindgen]
 pub struct Domris {
@@ -44,29 +39,35 @@ pub struct Domris {
     current_mino: Tetromino,
     drop_interval: u32,
     interval_count: u32,
-    control_queue: VecDeque<Control>
+    control_queue: VecDeque<Control>,
 }
 
-#[wasm_bindgen]
-impl Domris {
-    #[wasm_bindgen(constructor)]
-    pub fn new() -> Domris {
-        Domris {
-            board: Domris::board_initialize(),
+impl Default for Domris {
+    fn default() -> Self {
+        Self {
+            board: Self::board_initialize(),
             current_mino: Tetromino::random(),
             drop_interval: 1000,
             interval_count: 0,
             control_queue: VecDeque::new(), 
         }
     }
+}
 
-    pub fn update(&mut self, interval: u32) {
-        let mut control_done = false;
+#[wasm_bindgen]
+impl Domris {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Self {
+        Self { .. Default::default() }
+    }
+
+    pub fn update(&mut self, interval: u32) -> bool {
         while let Some(control) = self.control_queue.pop_front() {
-            if self.try_control(control) { control_done = true; }
-        }
-        if control_done { 
-            return; 
+            self.try_control(control);
+            if control == Control::MoveBottom {
+                self.next_tetromino();
+                return true;
+            }
         }
         self.interval_count += interval;
         if self.interval_count >= self.drop_interval { 
@@ -74,9 +75,10 @@ impl Domris {
                 self.interval_count -= self.drop_interval;
             } else {
                 self.next_tetromino();
-                self.interval_count = 0;
+                return true;
             }
         }
+        false
     }
 
     pub fn enqueue_control(&mut self, control: Control) {
@@ -92,18 +94,28 @@ impl Domris {
     }
 
     fn delete_line(&mut self) {
-        for y in 0..(self.board.len() - 1) {
+        for y in 0..(H - 1) {
             if self.board[y].iter().skip(1).take(W - 2)
-                .all(|cell| *cell != Cell::Empty) {
-                for yy in (1..=y).rev() {
-                    for x in 1..(W-1) {
-                        self.board[yy][x] = self.board[yy - 1][x];
-                    }
-                }
-                for x in 1..(W-1) {
-                    self.board[0][x] = Cell::Empty;
+                .any(|cell| cell.0 == Cell::Empty) { continue; }
+            for yy in (1..=y).rev() {
+                for x in 1..(W - 1) {
+                    self.board[yy][x] = self.board[yy - 1][x];
                 }
             }
+            for cell in self.board[0].iter_mut().skip(1).take(W - 2) {
+                cell.0 = Cell::Empty;
+            }
+        }
+    }
+
+    fn try_control(&mut self, control: Control) -> bool {
+        match control {
+            Control::MoveLeft => self.try_move_x(-1),
+            Control::MoveRight => self.try_move_x(1),
+            Control::MoveDown => self.try_drop(),
+            Control::MoveBottom => self.move_bottom(),
+            Control::RotateLeft => self.try_rotate(3),
+            Control::RotateRight => self.try_rotate(1),
         }
     }
 
@@ -119,17 +131,6 @@ impl Domris {
     fn move_bottom(&mut self) -> bool {
         while self.try_drop() {}
         false
-    }
-
-    fn try_control(&mut self, control: Control) -> bool {
-        match control {
-            Control::MoveLeft => self.try_move_x(-1),
-            Control::MoveRight => self.try_move_x(1),
-            Control::MoveDown => self.try_drop(),
-            Control::MoveBottom => self.move_bottom(),
-            Control::RotateLeft => self.try_rotate(3),
-            Control::RotateRight => self.try_rotate(1),
-        }
     }
 
     fn try_move_x(&mut self, diff: i8) -> bool {
@@ -152,31 +153,73 @@ impl Domris {
     
     fn overwrapping(&self) -> bool {
         self.current_mino.coordinates().iter().any(|(x, y)|
-            self.board[*y as usize][*x as usize] != Cell::Empty
+            self.board[*y as usize][*x as usize].0 != Cell::Empty
         )
+    }
+
+    fn penalty(&mut self) {
+        let mut delete_candidates = Vec::new();
+
+        {
+            let mino = self.current_mino();
+            for ((x, y), ref_num) in mino.coordinates().iter().zip(mino.numbers()) {
+                for (dx, dy) in DIRECTIONS.iter() {
+                    if y + dy < 0 { continue; }
+
+                    let xx = (x + dx) as usize;
+                    let yy = (y + dy) as usize;
+                    match self.board[yy][xx] {
+                        (Cell::Shape(_), Some(num)) => { 
+                            if num == *ref_num {
+                                return;
+                            } else {
+                                delete_candidates.push((xx, yy));
+                            }
+                        },
+                        (Cell::Empty, _) => { continue; },
+                        (Cell::Wall, Some(num)) => {
+                            if num == *ref_num { return; }
+                        },
+                        (Cell::Wall, None) => { return; },
+                        (_, _) => {},
+                    } 
+                }
+            }
+        }
+
+        for (x, y) in delete_candidates {
+            self.board[y][x] = (Cell::Empty, None);
+        }
     }
 
     // 1. 落ちたテトロミノを固定
     // 2. 新しいテトロミノをセット
     // 3. 揃ったラインを消す
+    // etc..
     fn next_tetromino(&mut self) {
+        self.penalty();
         let mut tmp_mino = Tetromino::random();
         std::mem::swap(&mut tmp_mino, &mut self.current_mino);
         let shape = tmp_mino.shape();
-        for (x, y) in tmp_mino.coordinates() {
-            self.board[y as usize][x as usize] = Cell::Shape(shape);
+        for ((x, y), num) in tmp_mino.coordinates().iter().zip(tmp_mino.numbers()) {
+            self.board[*y as usize][*x as usize] = (Cell::Shape(shape), Some(*num));
         }
         self.delete_line();
+        self.control_queue.clear();
+        self.interval_count = 0;
     }
 
     fn board_initialize() -> Board {
-        let mut board: Board = [[Cell::Empty; W]; H];
-        for y in 0..H {
-            for x in 0..W {
-                if x == 0 || x == W - 1 || y == H - 1 {
-                    board[y][x] = Cell::Wall;
-                }
-            }
+        let mut board: Board = [[(Cell::Empty, None); W]; H];
+        for cell in board[H - 1].iter_mut() {
+            *cell = (Cell::Wall, None);
+        }
+
+        let mut rng = thread_rng();
+        let range = rand::distributions::Uniform::new(1, 7); 
+        for line in board.iter_mut().take(H - 1) {
+            line[0]     = (Cell::Wall, Some(range.sample(&mut rng)));
+            line[W - 1] = (Cell::Wall, Some(range.sample(&mut rng)));
         }
         board
     }

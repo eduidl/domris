@@ -5,17 +5,17 @@ extern crate web_sys;
 use wasm_bindgen::prelude::*;
 
 mod domris;
-use domris::*;
-use domris::tetromino::Shape;
+use domris::{Cell, Domris};
+use domris::tetromino::{Tetromino, Shape};
+
+type Context2d = web_sys::CanvasRenderingContext2d;
 
 const SQUARE_PX: u16 = 30;
-const W_PX: u16 = W as u16 * SQUARE_PX;
-const H_PX: u16 = H as u16 * SQUARE_PX;
 
 fn shape_to_color(shape: Shape) -> String {
     match shape {
         Shape::I => "lightblue".to_string(),
-        Shape::O => "yellow".to_string(),
+        Shape::O => "gold".to_string(),
         Shape::T => "purple".to_string(),
         Shape::J => "blue".to_string(),
         Shape::L => "orange".to_string(),
@@ -33,38 +33,69 @@ fn cell_to_color(cell: Cell) -> String {
 }
 
 #[wasm_bindgen]
-pub fn draw(game: &Domris, ctx: &web_sys::CanvasRenderingContext2d) {
-    // 動いているテトロミノ以外
+pub fn draw(game: &Domris, ctx: &web_sys::CanvasRenderingContext2d,
+            partial_update: bool) {
+    if partial_update {
+        draw_background_full(game, ctx);
+    } else {
+        draw_background_partial(game, ctx);
+    }
+
+    draw_moving_tetromino(game.current_mino(), ctx);
+}
+
+fn draw_background_full(game: &Domris, ctx: &Context2d) {
+    ctx.set_font(&"bold 30px 'Times New Roman'".to_string());
     for (y, row) in game.board().iter().enumerate() {
-        for (x, cell) in row.iter().enumerate() {
+        for (x, (cell, num)) in row.iter().enumerate() {
             ctx.set_fill_style(&cell_to_color(*cell).into());
             ctx.fill_rect(
-                (x as u16 * SQUARE_PX) as f64,
-                (y as u16 * SQUARE_PX) as f64,
+                (x as u16 * SQUARE_PX).into(),
+                (y as u16 * SQUARE_PX).into(),
+                SQUARE_PX.into(), SQUARE_PX.into());
+
+            ctx.set_fill_style(&"white".to_string().into());
+            let text = if let Some(num) = num {
+                num.to_string()
+            } else if *cell == Cell::Wall { 
+                "*".to_string()
+            } else {
+                continue;
+            };
+            ctx.fill_text_with_max_width(&text,
+                (x as u16 * SQUARE_PX + 5).into(),
+                ((y + 1) as u16 * SQUARE_PX - 5).into(),
+                SQUARE_PX.into()).unwrap();
+        }
+    }
+}
+
+fn draw_background_partial(game: &Domris, ctx: &Context2d) {
+    for (y, row) in game.board().iter().enumerate() {
+        for (x, (cell, _)) in row.iter().enumerate() {
+            if *cell != Cell::Empty { continue; }
+            ctx.set_fill_style(&cell_to_color(*cell).into());
+            ctx.fill_rect(
+                (x as u16 * SQUARE_PX).into(),
+                (y as u16 * SQUARE_PX).into(),
                 SQUARE_PX.into(), SQUARE_PX.into());
         }
     }
+}
 
-    // 動いているテトロミノ
-    let mino = game.current_mino();
-    ctx.set_fill_style(&shape_to_color(mino.shape()).into());
-    for (x, y) in mino.coordinates() {
+fn draw_moving_tetromino(mino: &Tetromino, ctx: &Context2d) {
+    for ((x, y), num) in mino.coordinates().iter().zip(mino.numbers()) {
+        ctx.set_fill_style(&shape_to_color(mino.shape()).into());
         ctx.fill_rect(
-            (x as u16 * SQUARE_PX) as f64,
-            (y as u16 * SQUARE_PX) as f64,
+            (*x as u16 * SQUARE_PX).into(),
+            (*y as u16 * SQUARE_PX).into(),
             SQUARE_PX.into(), SQUARE_PX.into());
-    }
 
-    // 罫線
-    ctx.set_stroke_style(&"white".into());
-    ctx.begin_path();
-    for x in (0..=W_PX).step_by(SQUARE_PX as usize) {
-        ctx.move_to(x.into(), 0.0);
-        ctx.line_to(x.into(), H_PX.into());
+        ctx.set_fill_style(&"white".to_string().into());
+        ctx.fill_text_with_max_width(
+            &num.to_string(),
+            (*x as u16 * SQUARE_PX + 5).into(),
+            ((*y + 1) as u16 * SQUARE_PX - 5).into(),
+            SQUARE_PX.into()).unwrap();
     }
-    for y in (0..=H_PX).step_by(SQUARE_PX as usize) {
-        ctx.move_to(0.0,         y.into());
-        ctx.line_to(W_PX.into(), y.into());
-    }
-    ctx.stroke();
 }

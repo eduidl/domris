@@ -3,7 +3,7 @@ import("./wasm/domris")
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     let domris = new wasm.Domris;
-    wasm.draw(domris, ctx);
+    wasm.draw(domris, ctx, true);
 
     document.addEventListener('keydown', (e) => {
       switch(e.key) {
@@ -35,8 +35,8 @@ import("./wasm/domris")
     var last = now = Date.now();
     function frame() {
       now = Date.now();
-      domris.update(now - last);
-      wasm.draw(domris, ctx);
+      result = domris.update(now - last);
+      wasm.draw(domris, ctx, result);
       last = now;
       requestAnimationFrame(frame, canvas);
     }
