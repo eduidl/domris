@@ -39,7 +39,7 @@ pub enum Control {
 type Board = [[Cell; W]; H];
 
 #[wasm_bindgen]
-pub struct Tetris {
+pub struct Domris {
     board: Board,
     current_mino: Tetromino,
     drop_interval: u32,
@@ -48,11 +48,11 @@ pub struct Tetris {
 }
 
 #[wasm_bindgen]
-impl Tetris {
+impl Domris {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> Tetris {
-        Tetris {
-            board: Tetris::board_initialize(),
+    pub fn new() -> Domris {
+        Domris {
+            board: Domris::board_initialize(),
             current_mino: Tetromino::random(),
             drop_interval: 1000,
             interval_count: 0,

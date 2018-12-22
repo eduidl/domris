@@ -1,8 +1,8 @@
 /* tslint:disable */
 export enum Control {MoveLeft,MoveRight,MoveDown,MoveBottom,RotateLeft,RotateRight,}
-export function draw(arg0: Tetris, arg1: any): void;
+export function draw(arg0: Domris, arg1: any): void;
 
-export class Tetris {
+export class Domris {
 free(): void;
 
  constructor();

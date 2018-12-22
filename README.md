@@ -1,4 +1,4 @@
-# Tetris (仮)
+# Domris
 
 ## Requirements
 
