@@ -10,7 +10,7 @@ use domris::tetromino::{Tetromino, Shape};
 
 type Context2d = web_sys::CanvasRenderingContext2d;
 
-const SQUARE_PX: u16 = 30;
+const SQUARE_PX: u16 = 25;
 
 fn shape_to_color(shape: Shape) -> String {
     match shape {
@@ -45,7 +45,7 @@ pub fn draw(game: &Domris, ctx: &web_sys::CanvasRenderingContext2d,
 }
 
 fn draw_background_full(game: &Domris, ctx: &Context2d) {
-    ctx.set_font(&"bold 30px 'Times New Roman'".to_string());
+    ctx.set_font(&"bold 25px 'Times New Roman'".to_string());
     for (y, row) in game.board().iter().enumerate() {
         for (x, (cell, num)) in row.iter().enumerate() {
             ctx.set_fill_style(&cell_to_color(*cell).into());
