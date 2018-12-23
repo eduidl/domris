@@ -13,16 +13,6 @@ const DIRECTIONS: [(i8, i8); 4] = [
     (-1, 0), (1, 0)
 ];
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
-
-macro_rules! console_log {
-    ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
-}
-
 #[derive(PartialEq, Copy, Clone)]
 pub enum Cell {
     Shape(Shape),
@@ -48,7 +38,7 @@ pub struct Domris {
     started: bool,
     gameover: bool,
     board: Board,
-    level: u8,
+    max_number: u8,
     current_mino: Tetromino,
     point: u32,
     drop_interval: u32,
@@ -62,8 +52,8 @@ impl Default for Domris {
             started: false,
             gameover: false,
             board: [[(Cell::Empty, None); W]; H],
-            level: 1,
-            current_mino: Tetromino::random(2),
+            max_number: 1,
+            current_mino: Tetromino::random(1),
             point: 0,
             drop_interval: 1000,
             interval_count: 0,
@@ -80,11 +70,17 @@ impl Domris {
     }
 
     pub fn start(&mut self, level: u8) {
+        let max_number = match level {
+            1 => 1,
+            2 => 3,
+            3 => 6,
+            _ => panic!("level should be in [1, 2, 3].")
+        };
         *self = Self {
             started: true,
-            board: Self::board_initialize(level * 2),
-            level: level,
-            current_mino: Tetromino::random(level * 2),
+            board: Self::board_initialize(max_number),
+            max_number,
+            current_mino: Tetromino::random(max_number),
             .. Default::default()
         };
     }
@@ -236,7 +232,7 @@ impl Domris {
 
     fn next_tetromino(&mut self) {
         self.penalty();
-        let mut tmp_mino = Tetromino::random(self.level * 2);
+        let mut tmp_mino = Tetromino::random(self.max_number);
         std::mem::swap(&mut tmp_mino, &mut self.current_mino);
         let shape = tmp_mino.shape();
         for ((x, y), num) in tmp_mino.coordinates().iter().zip(tmp_mino.numbers()) {
@@ -256,14 +252,14 @@ impl Domris {
         self.interval_count = 0;
     }
 
-    fn board_initialize(number_max: u8) -> Board {
+    fn board_initialize(max_number: u8) -> Board {
         let mut board: Board = [[(Cell::Empty, None); W]; H];
         for cell in board[H - 1].iter_mut() {
             *cell = (Cell::Wall, None);
         }
 
         let mut rng = thread_rng();
-        let range = rand::distributions::Uniform::new(1, number_max + 1); 
+        let range = rand::distributions::Uniform::new(0, max_number + 1); 
         for line in board.iter_mut().take(H - 1) {
             line[0]     = (Cell::Wall, Some(range.sample(&mut rng)));
             line[W - 1] = (Cell::Wall, Some(range.sample(&mut rng)));

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:debug": "cargo +beta build --target wasm32-unknown-unknown && wasm-bindgen target/wasm32-unknown-unknown/debug/domris.wasm --out-dir ./wasm && rm -rf docs && webpack",
-    "build:release": "cargo +beta build --release --target wasm32-unknown-unknown && wasm-bindgen target/wasm32-unknown-unknown/release/domris.wasm --out-dir ./wasm && rm -rf docs && NODE_ENV=production webpack",
+    "build:debug": "cargo +beta build --target wasm32-unknown-unknown && wasm-bindgen target/wasm32-unknown-unknown/debug/domris.wasm --out-dir ./wasm && rm -r docs && webpack",
+    "build:release": "cargo +beta build --release --target wasm32-unknown-unknown && wasm-bindgen target/wasm32-unknown-unknown/release/domris.wasm --out-dir ./wasm && rm -r docs && NODE_ENV=production webpack",
     "server": "webpack-dev-server -w"
   },
   "repository": {
@@ -19,9 +19,13 @@
   },
   "homepage": "https://github.com/eduidl/domris#readme",
   "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.2.3",
+    "babel-loader": "^8.0.4",
     "html-webpack-plugin": "^3.2.0",
-    "webpack": "^4.27.1",
+    "webpack": "^4.28.2",
     "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10"
+    "webpack-dev-server": "^3.1.13"
   }
 }

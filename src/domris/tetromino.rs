@@ -81,7 +81,7 @@ impl Tetromino {
     pub(super) fn random(number_max: u8) -> Self {
         let mut rng = thread_rng();
         let shape_range = Uniform::new(0, SHAPES.len());
-        let number_range = Uniform::new(1, number_max + 1);
+        let number_range = Uniform::new(0, number_max + 1);
         Self {
             shape: SHAPES[shape_range.sample(&mut rng)],
             rotate: 0,
