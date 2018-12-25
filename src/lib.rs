@@ -1,12 +1,8 @@
-extern crate rand;
-extern crate wasm_bindgen;
-extern crate web_sys;
-
 use wasm_bindgen::prelude::*;
 
 mod domris;
-use domris::{Cell, Domris};
-use domris::tetromino::{Tetromino, Shape};
+use self::domris::{Cell, Domris};
+use self::domris::tetromino::{Tetromino, Shape};
 
 type Context2d = web_sys::CanvasRenderingContext2d;
 

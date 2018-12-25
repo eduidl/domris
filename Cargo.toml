@@ -2,6 +2,7 @@
 name = "domris"
 version = "0.1.0"
 authors = ["Yuma Hiramatsu <ayzgnm5k8y@gmail.com>"]
+edition = "2018"
 
 [lib]
 crate-type = ["cdylib"]
