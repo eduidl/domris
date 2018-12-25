@@ -32,18 +32,6 @@ fn cell_to_color(cell: Cell) -> String {
     }
 }
 
-#[wasm_bindgen]
-pub fn draw(game: &Domris, ctx: &web_sys::CanvasRenderingContext2d,
-            partial_update: bool) {
-    if partial_update {
-        draw_background_full(game, ctx);
-    } else {
-        draw_background_partial(game, ctx);
-    }
-
-    draw_moving_tetromino(game.current_mino(), ctx);
-}
-
 fn draw_background_full(game: &Domris, ctx: &Context2d) {
     ctx.set_font(&"bold 25px 'Times New Roman'".to_string());
     for (y, row) in game.board().iter().enumerate() {
@@ -85,7 +73,7 @@ fn draw_background_partial(game: &Domris, ctx: &Context2d) {
 
 fn draw_moving_tetromino(mino: &Tetromino, ctx: &Context2d) {
     for ((x, y), num) in mino.coordinates().iter().zip(mino.numbers()) {
-        ctx.set_fill_style(&shape_to_color(mino.shape()).into());
+        ctx.set_fill_style(&shape_to_color(mino.shape).into());
         ctx.fill_rect(
             (*x as u16 * SQUARE_PX).into(),
             (*y as u16 * SQUARE_PX).into(),
@@ -93,9 +81,21 @@ fn draw_moving_tetromino(mino: &Tetromino, ctx: &Context2d) {
 
         ctx.set_fill_style(&"white".to_string().into());
         ctx.fill_text_with_max_width(
-            &num.to_string(),
+            &*num.to_string(),
             (*x as u16 * SQUARE_PX + 5).into(),
             ((*y + 1) as u16 * SQUARE_PX - 5).into(),
             SQUARE_PX.into()).unwrap();
     }
+}
+
+#[wasm_bindgen]
+pub fn draw(game: &Domris, ctx: &web_sys::CanvasRenderingContext2d,
+            partial_update: bool) {
+    if partial_update {
+        draw_background_full(game, ctx);
+    } else {
+        draw_background_partial(game, ctx);
+    }
+
+    draw_moving_tetromino(game.current_mino(), ctx);
 }

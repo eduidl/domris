@@ -177,6 +177,13 @@ export class Domris {
     }
 
     /**
+    * @returns {number}
+    */
+    get point() {
+        return wasm.__wbg_get_domris_point(this.ptr);
+    }
+
+    /**
     * @returns {}
     */
     constructor() {
@@ -201,18 +208,6 @@ export class Domris {
     */
     playing() {
         return (wasm.domris_playing(this.ptr)) !== 0;
-    }
-    /**
-    * @returns {number}
-    */
-    point() {
-        return wasm.domris_point(this.ptr);
-    }
-    /**
-    * @returns {boolean}
-    */
-    gameover() {
-        return (wasm.domris_gameover(this.ptr)) !== 0;
     }
     /**
     * @param {number} arg0

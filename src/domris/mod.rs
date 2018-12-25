@@ -40,7 +40,8 @@ pub struct Domris {
     board: Board,
     max_number: u8,
     current_mino: Tetromino,
-    point: u32,
+    #[wasm_bindgen(readonly)]
+    pub point: u32,
     drop_interval: u32,
     interval_count: u32,
     control_queue: VecDeque<Control>,
@@ -108,14 +109,6 @@ impl Domris {
 
     pub fn playing(&self) -> bool {
         self.started && !self.gameover
-    }
-
-    pub fn point(&self) -> u32 {
-        self.point
-    }
-
-    pub fn gameover(&self) -> bool {
-        self.gameover
     }
 
     pub fn enqueue_control(&mut self, control: Control) {
@@ -234,7 +227,7 @@ impl Domris {
         self.penalty();
         let mut tmp_mino = Tetromino::random(self.max_number);
         std::mem::swap(&mut tmp_mino, &mut self.current_mino);
-        let shape = tmp_mino.shape();
+        let shape = tmp_mino.shape;
         for ((x, y), num) in tmp_mino.coordinates().iter().zip(tmp_mino.numbers()) {
             if *y < 0 {
                 self.gameover = true;

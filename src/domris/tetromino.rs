@@ -71,7 +71,7 @@ const BLOCKS: [[[(i8, i8); 4]; 4]; 7] = [
 ];
 
 pub struct Tetromino {
-    shape: Shape,
+    pub shape: Shape,
     rotate: usize,
     ref_pos: (i8, i8),
     numbers: Vec<u8>,
@@ -88,10 +88,6 @@ impl Tetromino {
             ref_pos: (4, 0),
             numbers: number_range.sample_iter(&mut rng).take(4).collect(),
         }
-    }
-
-    pub fn shape(&self) -> Shape {
-        self.shape
     }
 
     pub fn coordinates(&self) -> Block {

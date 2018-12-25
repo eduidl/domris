@@ -63,7 +63,7 @@ import("./wasm/domris")
       result = domris.update(now - last);
       wasm.draw(domris, ctx, result);
       if (result) {
-        point.innerHTML = domris.point();
+        point.innerHTML = domris.point;
       }
       last = now;
       let request_id = requestAnimationFrame(frame, canvas);
