@@ -1,19 +1,44 @@
 /* tslint:disable */
-export enum Control {MoveLeft,MoveRight,MoveDown,MoveBottom,RotateLeft,RotateRight,}
-export function draw(arg0: Domris, arg1: any, arg2: boolean): void;
-
+/**
+* @param {Domris} game 
+* @param {any} ctx 
+* @param {boolean} partial_update 
+*/
+export function draw(game: Domris, ctx: any, partial_update: boolean): void;
+export enum Control {
+  MoveLeft,
+  MoveRight,
+  MoveDown,
+  MoveBottom,
+  RotateLeft,
+  RotateRight,
+}
+/**
+*/
+/**
+*/
 export class Domris {
-free(): void;
-readonly point: number
-
- constructor();
-
- start(arg0: number): void;
-
- update(arg0: number): boolean;
-
- playing(): boolean;
-
- enqueue_control(arg0: number): void;
-
+  free(): void;
+/**
+* @returns {Domris} 
+*/
+  constructor();
+/**
+* @param {number} level 
+*/
+  start(level: number): void;
+/**
+* @param {number} interval 
+* @returns {boolean} 
+*/
+  update(interval: number): boolean;
+/**
+* @returns {boolean} 
+*/
+  playing(): boolean;
+/**
+* @param {number} control 
+*/
+  enqueue_control(control: number): void;
+  readonly point: number;
 }
