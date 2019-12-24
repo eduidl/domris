@@ -3,29 +3,34 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
-  entry: './index.js',
+  entry: './src/ts/index.ts',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'docs'),
+    path: path.resolve(__dirname, 'docs')
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.ts$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env'],
-            plugins: ['@babel/plugin-syntax-dynamic-import']
-          }
-        }
+        use: 'ts-loader'
+      }, {
+        test: /\.wasm$/,
+        type: 'webassembly/experimental'
+      }, {
+        enforce: 'pre',
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        loader: 'eslint-loader'
       }
     ]
   },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.wasm']
+  },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'index.html'
+      template: './src/index.html'
     })
   ]
 };
