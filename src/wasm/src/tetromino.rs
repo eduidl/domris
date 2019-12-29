@@ -84,7 +84,7 @@ pub struct Tetromino {
 }
 
 impl Tetromino {
-    pub(super) fn random(number_max: u8) -> Self {
+    pub fn random(number_max: u8) -> Self {
         let mut rng = thread_rng();
         let shape_range = Uniform::new(0, SHAPES.len());
         let number_range = Uniform::new(0, number_max + 1);
@@ -117,15 +117,15 @@ impl Tetromino {
         &self.numbers
     }
 
-    pub(super) fn move_x(&mut self, diff: i8) {
+    pub fn move_x(&mut self, diff: i8) {
         self.ref_pos.0 += diff;
     }
 
-    pub(super) fn move_y(&mut self, diff: i8) {
+    pub fn move_y(&mut self, diff: i8) {
         self.ref_pos.1 += diff;
     }
 
-    pub(super) fn rotate(&mut self, diff: usize) {
+    pub fn rotate(&mut self, diff: usize) {
         self.rotate = (self.rotate + diff) % 4;
     }
 }

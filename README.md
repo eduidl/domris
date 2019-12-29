@@ -1,5 +1,7 @@
 # Domris
 
+You can play [here](https://eduidl.github.io/domris/) (keyboard is needed).
+
 ## Requirements
 
 - Rust
@@ -17,12 +19,5 @@ $ cargo install wasm-pack
 ```terminal
 $ npm i
 $ npm run build:release
-$ npm run server
-```
-
-## Lint
-
-```terminal
-$ npm run lint
-$ npm run lint:fix  # fix
+$ npm run start
 ```

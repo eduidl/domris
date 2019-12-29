@@ -1,109 +1,155 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use js_sys;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
+use web_sys;
 
 mod domris;
-use self::domris::tetromino::{Shape, Tetromino};
-use self::domris::{Cell, Domris};
+mod drawer;
+mod tetromino;
+mod web_lib;
+use self::domris::{Control, Domris};
 
-type Context2d = web_sys::CanvasRenderingContext2d;
+struct Timer {
+    last: f64,
+}
 
-const SQUARE_PX: u16 = 25;
+impl Timer {
+    fn new() -> Self {
+        Self { last: -1. }
+    }
 
-fn shape_to_color(shape: Shape) -> String {
-    match shape {
-        Shape::I => "lightblue".to_string(),
-        Shape::O => "gold".to_string(),
-        Shape::T => "purple".to_string(),
-        Shape::J => "blue".to_string(),
-        Shape::L => "orange".to_string(),
-        Shape::S => "green".to_string(),
-        Shape::Z => "red".to_string(),
+    fn tick(&mut self) -> f64 {
+        let now = js_sys::Date::now();
+        let elapsed = now - self.last;
+        self.last = now;
+        elapsed
     }
 }
 
-fn cell_to_color(cell: Cell) -> String {
-    match cell {
-        Cell::Shape(shape) => shape_to_color(shape),
-        Cell::Empty => "gray".to_string(),
-        Cell::Wall => "black".to_string(),
-    }
-}
-
-fn draw_background_full(game: &Domris, ctx: &Context2d) {
-    ctx.set_font(&"bold 25px 'Times New Roman'".to_string());
-    for (y, row) in game.board().iter().enumerate() {
-        for (x, (cell, num)) in row.iter().enumerate() {
-            ctx.set_fill_style(&cell_to_color(*cell).into());
-            ctx.fill_rect(
-                (x as u16 * SQUARE_PX).into(),
-                (y as u16 * SQUARE_PX).into(),
-                SQUARE_PX.into(),
-                SQUARE_PX.into(),
-            );
-
-            ctx.set_fill_style(&"white".to_string().into());
-            let text = if let Some(num) = num {
-                num.to_string()
-            } else if *cell == Cell::Wall {
-                "*".to_string()
+fn key2control(e: &web_sys::KeyboardEvent) -> Option<Control> {
+    match e.key().as_ref() {
+        "ArrowRight" | "l" => Some(Control::MoveRight),
+        "ArrowLeft" | "h" => Some(Control::MoveLeft),
+        "ArrowDown" | "j" => Some(Control::MoveDown),
+        "ArrowUp" | "k" => Some(Control::MoveBottom),
+        " " => {
+            if e.shift_key() {
+                Some(Control::RotateLeft)
             } else {
-                continue;
-            };
-            ctx.fill_text_with_max_width(
-                &text,
-                (x as u16 * SQUARE_PX + 5).into(),
-                ((y + 1) as u16 * SQUARE_PX - 5).into(),
-                SQUARE_PX.into(),
-            )
-            .unwrap();
-        }
-    }
-}
-
-fn draw_background_partial(game: &Domris, ctx: &Context2d) {
-    for (y, row) in game.board().iter().enumerate() {
-        for (x, (cell, _)) in row.iter().enumerate() {
-            if *cell != Cell::Empty {
-                continue;
+                Some(Control::RotateRight)
             }
-            ctx.set_fill_style(&cell_to_color(*cell).into());
-            ctx.fill_rect(
-                (x as u16 * SQUARE_PX).into(),
-                (y as u16 * SQUARE_PX).into(),
-                SQUARE_PX.into(),
-                SQUARE_PX.into(),
-            );
+        }
+        _ => None,
+    }
+}
+
+#[wasm_bindgen(start)]
+pub fn start_app() {
+    let domris = Rc::new(RefCell::new(Domris::new()));
+    let levels = web_lib::game_level_btns().length();
+    assert!(levels == 3);
+
+    {
+        let document = web_lib::document();
+        let domris = domris.clone();
+
+        let closure = Closure::wrap(Box::new(move |e: web_sys::KeyboardEvent| {
+            if let Some(control) = key2control(&e) {
+                domris.borrow_mut().enqueue_control(control);
+                e.prevent_default();
+            }
+        }) as Box<dyn FnMut(_)>);
+        document
+            .add_event_listener_with_callback("keydown", closure.as_ref().unchecked_ref())
+            .unwrap();
+        closure.forget();
+    }
+    {
+        for i in 0..levels {
+            let domris = domris.clone();
+            let game_level_btns = web_lib::game_level_btns();
+            let btn_clicked = web_lib::game_level_btn(&game_level_btns, i);
+
+            let closure = Closure::wrap(Box::new(move |_e: web_sys::MouseEvent| {
+                if domris.borrow().playing() {
+                    return;
+                }
+                for j in 0..levels {
+                    let level_btn = web_lib::game_level_btn(&game_level_btns, j);
+                    if i == j {
+                        level_btn.class_list().add_1("active").unwrap();
+                    } else {
+                        level_btn.class_list().remove_1("active").unwrap();
+                    }
+                }
+                domris.borrow_mut().set_level(i);
+            }) as Box<dyn FnMut(_)>);
+            btn_clicked
+                .add_event_listener_with_callback("click", closure.as_ref().unchecked_ref())
+                .unwrap();
+            closure.forget();
         }
     }
-}
+    {
+        // これ何とかならないのか？
+        let domris_clone = domris.clone();
+        let mut timer = Timer::new();
+        let ctx = web_lib::ctx();
+        let point = web_lib::point();
+        let game_level_btns = web_lib::game_level_btns();
+        let game_toggle_btn = web_lib::game_toggle_btn();
+        let f = Rc::new(RefCell::new(None));
+        let g = f.clone();
 
-fn draw_moving_tetromino(mino: &Tetromino, ctx: &Context2d) {
-    for ((x, y), num) in mino.coordinates().iter().zip(mino.numbers()) {
-        ctx.set_fill_style(&shape_to_color(mino.shape).into());
-        ctx.fill_rect(
-            (*x as u16 * SQUARE_PX).into(),
-            (*y as u16 * SQUARE_PX).into(),
-            SQUARE_PX.into(),
-            SQUARE_PX.into(),
-        );
+        *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
+            let result = domris_clone.borrow_mut().update(timer.tick() as u32);
+            drawer::draw(&domris_clone.borrow(), &ctx, result);
+            if result {
+                point.set_inner_text(&domris_clone.borrow().point.to_string());
+            }
+            let request_id = web_lib::request_animation_frame(f.borrow().as_ref().unwrap());
+            if domris_clone.borrow().playing() {
+                return;
+            }
+            game_toggle_btn.set_inner_text("Play!");
+            game_toggle_btn.class_list().remove_1("disabled").unwrap();
+            for i in 0..levels {
+                let game_level_btn = web_lib::game_level_btn(&game_level_btns, i);
+                game_level_btn.class_list().remove_1("disabled").unwrap();
+            }
+            web_lib::cancel_animation_frame(request_id);
+        }) as Box<dyn FnMut()>));
 
-        ctx.set_fill_style(&"white".to_string().into());
-        ctx.fill_text_with_max_width(
-            &*num.to_string(),
-            (*x as u16 * SQUARE_PX + 5).into(),
-            ((*y + 1) as u16 * SQUARE_PX - 5).into(),
-            SQUARE_PX.into(),
-        )
-        .unwrap();
+        let domris = domris.clone();
+        let ctx = web_lib::ctx();
+        let game_level_btns = web_lib::game_level_btns();
+        let game_toggle_btn = web_lib::game_toggle_btn();
+
+        let closure = Closure::wrap(Box::new(move |_e: web_sys::MouseEvent| {
+            if domris.borrow().playing() {
+                return;
+            }
+            web_lib::request_animation_frame(g.borrow().as_ref().unwrap());
+
+            game_toggle_btn.set_inner_text("Playing");
+            game_toggle_btn.class_list().add_1("disabled").unwrap();
+            for i in 0..levels {
+                if i == domris.borrow().level {
+                    continue;
+                }
+                let level_btn = web_lib::game_level_btn(&game_level_btns, i);
+                level_btn.class_list().add_1("disabled").unwrap();
+            }
+            domris.borrow_mut().start();
+            drawer::draw(&domris.borrow(), &ctx, true);
+        }) as Box<dyn FnMut(_)>);
+
+        web_lib::game_toggle_btn()
+            .add_event_listener_with_callback("click", closure.as_ref().unchecked_ref())
+            .unwrap();
+        closure.forget();
     }
-}
-
-#[wasm_bindgen]
-pub fn draw(game: &Domris, ctx: &web_sys::CanvasRenderingContext2d, partial_update: bool) {
-    if partial_update {
-        draw_background_full(game, ctx);
-    } else {
-        draw_background_partial(game, ctx);
-    }
-
-    draw_moving_tetromino(game.current_mino(), ctx);
 }

@@ -8,6 +8,7 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
+js-sys = "0.3.33"
 rand = { version = "0.6.1", features = ["wasm-bindgen"] }
 wasm-bindgen = "0.2.29"
 
@@ -15,4 +16,16 @@ wasm-bindgen = "0.2.29"
 version = "0.3.6"
 features = [
   "CanvasRenderingContext2d",
+  "DomTokenList",
+  "Element",
+  "Event",
+  "EventTarget",
+  "Document",
+  "HtmlCanvasElement",
+  "HtmlElement",
+  "KeyboardEvent",
+  "MouseEvent",
+  "Node",
+  "NodeList",
+  "Window",
 ]

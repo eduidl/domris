@@ -1,9 +1,7 @@
 use rand::prelude::*;
 use std::collections::VecDeque;
-use wasm_bindgen::prelude::*;
 
-use self::tetromino::{Shape, Tetromino};
-pub mod tetromino;
+use crate::tetromino::{Shape, Tetromino};
 
 pub const W: usize = 12;
 pub const H: usize = 22;
@@ -17,7 +15,6 @@ pub enum Cell {
     Wall,
 }
 
-#[wasm_bindgen]
 #[derive(PartialEq, Copy, Clone)]
 pub enum Control {
     MoveLeft,
@@ -30,14 +27,13 @@ pub enum Control {
 
 type Board = [[(Cell, Option<u8>); W]; H];
 
-#[wasm_bindgen]
 pub struct Domris {
+    pub level: u32,
     started: bool,
     gameover: bool,
     board: Board,
     max_number: u8,
     current_mino: Tetromino,
-    #[wasm_bindgen(readonly)]
     pub point: u32,
     drop_interval: u32,
     interval_count: u32,
@@ -47,6 +43,7 @@ pub struct Domris {
 impl Default for Domris {
     fn default() -> Self {
         Self {
+            level: 0,
             started: false,
             gameover: false,
             board: [[(Cell::Empty, None); W]; H],
@@ -60,28 +57,32 @@ impl Default for Domris {
     }
 }
 
-#[wasm_bindgen]
 impl Domris {
-    #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         Self {
             ..Default::default()
         }
     }
 
-    pub fn start(&mut self, level: u8) {
-        let max_number = match level {
-            1 => 1,
-            2 => 3,
-            3 => 6,
-            _ => panic!("level should be in [1, 2, 3]."),
-        };
+    pub fn start(&mut self) {
         *self = Self {
+            level: self.level,
             started: true,
-            board: Self::board_initialize(max_number),
-            max_number,
-            current_mino: Tetromino::random(max_number),
+            board: Self::board_initialize(self.max_number),
+            max_number: self.max_number,
+            current_mino: Tetromino::random(self.max_number),
             ..Default::default()
+        };
+    }
+
+    pub fn set_level(&mut self, level: u32) {
+        assert!(!self.playing());
+        self.level = level;
+        self.max_number = match level {
+            0 => 1,
+            1 => 3,
+            2 => 6,
+            _ => panic!("level should be in [0, 1, 2]."),
         };
     }
 
@@ -116,11 +117,11 @@ impl Domris {
         self.control_queue.push_back(control);
     }
 
-    pub(super) fn board(&self) -> &Board {
+    pub fn board(&self) -> &Board {
         &self.board
     }
 
-    pub(super) fn current_mino(&self) -> &Tetromino {
+    pub fn current_mino(&self) -> &Tetromino {
         &self.current_mino
     }
 
