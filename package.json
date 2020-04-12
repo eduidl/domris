@@ -12,7 +12,9 @@
   },
   "watch": {
     "watch_rust": {
-      "patterns": ["src/wasm"],
+      "patterns": [
+        "src/wasm"
+      ],
       "extensions": "rs"
     }
   },
