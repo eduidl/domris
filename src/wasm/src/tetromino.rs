@@ -108,7 +108,7 @@ impl Tetromino {
         }[self.rotate];
 
         blocks
-            .into_iter()
+            .iter()
             .map(|(x, y)| (self.ref_pos.0 + x, self.ref_pos.1 + y))
             .collect()
     }

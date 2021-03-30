@@ -13,18 +13,21 @@ mod web_lib;
 use self::domris::{Control, Domris};
 
 struct Timer {
-    last: f64,
+    last: Option<f64>,
 }
 
 impl Timer {
     fn new() -> Self {
-        Self { last: -1. }
+        Self { last: None }
     }
 
     fn tick(&mut self) -> f64 {
         let now = js_sys::Date::now();
-        let elapsed = now - self.last;
-        self.last = now;
+        let elapsed = match self.last {
+            Some(last) => now - last,
+            None => 0.,
+        };
+        self.last = Some(now);
         elapsed
     }
 }
