@@ -1,5 +1,8 @@
 # Domris
 
+[![Deploy GitHub Pages](https://github.com/eduidl/domris/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/eduidl/domris/actions/workflows/gh-pages.yml)
+[![License](https://img.shields.io/github/license/eduidl/domris)](https://github.com/eduidl/domris/blob/main/LICENSE)
+
 You can play [here](https://eduidl.github.io/domris/) (keyboard is needed).
 
 ## Requirements
