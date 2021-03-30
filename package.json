@@ -22,7 +22,7 @@
     "type": "git",
     "url": "git+https://github.com/eduidl/domris.git"
   },
-  "author": "Yuma Hiramatsu",
+  "author": "Yuma Hiramatsu <yuma.hiramatsu@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/eduidl/domris/issues"
@@ -36,6 +36,5 @@
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1"
-  },
-  "dependencies": {}
+  }
 }
